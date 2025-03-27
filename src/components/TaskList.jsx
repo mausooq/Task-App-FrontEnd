@@ -1,15 +1,16 @@
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Chip,
-    CircularProgress,
-    Dialog,
-    Grid,
-    IconButton,
-    Typography
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Dialog,
+  Grid,
+  IconButton,
+  Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { TaskService } from '../services/TaskService';
@@ -25,9 +26,12 @@ function TaskList() {
 
   const fetchTasks = async () => {
     try {
+      setLoading(true);
       const data = await TaskService.getAllTasks();
       setTasks(data);
+      setError('');
     } catch (error) {
+      console.error('Error fetching tasks:', error);
       setError('Failed to fetch tasks');
     } finally {
       setLoading(false);
@@ -75,53 +79,62 @@ function TaskList() {
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h5">Tasks</Typography>
+        <Typography variant="h5">My Tasks</Typography>
         <Button variant="contained" onClick={() => setOpenDialog(true)}>
           Add New Task
         </Button>
       </Box>
 
       {error && (
-        <Typography color="error" sx={{ mb: 2 }}>
+        <Alert severity="error" sx={{ mb: 2 }}>
           {error}
-        </Typography>
+        </Alert>
       )}
 
-      <Grid container spacing={3}>
-        {tasks.map((task) => (
-          <Grid item xs={12} sm={6} md={4} key={task._id}>
-            <Card>
-              <TaskImage image={task.image} title={task.title} />
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {task.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {task.description}
-                </Typography>
-                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Chip 
-                    label={task.status} 
-                    color={
-                      task.status === 'Done' ? 'success' : 
-                      task.status === 'In-Progress' ? 'warning' : 'default'
-                    }
-                    size="small"
-                  />
-                  <Box>
-                    <IconButton size="small" onClick={() => handleEdit(task)}>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton size="small" onClick={() => handleDelete(task._id)}>
-                      <DeleteIcon />
-                    </IconButton>
+      {tasks.length === 0 ? (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          You haven't created any tasks yet. Click "Add New Task" to get started!
+        </Alert>
+      ) : (
+        <Grid container spacing={3}>
+          {tasks.map((task) => (
+            <Grid item xs={12} sm={6} md={4} key={task._id}>
+              <Card>
+                <TaskImage image={task.image} title={task.title} />
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    {task.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    {task.description}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    Due: {new Date(task.date).toLocaleDateString()}
+                  </Typography>
+                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Chip 
+                      label={task.status} 
+                      color={
+                        task.status === 'Done' ? 'success' : 
+                        task.status === 'In-Progress' ? 'warning' : 'default'
+                      }
+                      size="small"
+                    />
+                    <Box>
+                      <IconButton size="small" onClick={() => handleEdit(task)}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton size="small" onClick={() => handleDelete(task._id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
                   </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
       <Dialog 
         open={openDialog} 

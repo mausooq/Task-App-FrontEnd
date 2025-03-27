@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://task-app-mern-vl34.onrender.com/api/tasks';
+const API_URL = 'http://localhost:8080/api/tasks';
 
 const api = axios.create({
   baseURL: API_URL,
