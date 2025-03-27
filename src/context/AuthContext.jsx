@@ -5,7 +5,7 @@ const AuthContext = createContext(null);
 
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://task-app-mern-q6y2.onrender.com',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
