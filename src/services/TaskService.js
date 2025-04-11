@@ -1,6 +1,10 @@
 import axios from 'axios';
 
+<<<<<<< HEAD
 const API_URL = 'https://task-app-mern-q6y2.onrender.com/api/tasks';
+=======
+const API_URL = 'http://localhost:8080/api/tasks';
+>>>>>>> 019605594b4af7c4628904f99aa91255fee96225
 
 const api = axios.create({
   baseURL: API_URL,

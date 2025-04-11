@@ -61,7 +61,11 @@ function Login() {
     setIsSubmitting(true);
 
     try {
+<<<<<<< HEAD
       const response = await axios.post('https://task-app-mern-q6y2.onrender.com/api/auth/forgot-password', 
+=======
+      const response = await axios.post('http://localhost:8080/api/auth/forgot-password', 
+>>>>>>> 019605594b4af7c4628904f99aa91255fee96225
         { email: forgotEmail },
         { withCredentials: true }
       );
