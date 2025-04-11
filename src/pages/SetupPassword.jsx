@@ -1,12 +1,11 @@
 import {
-    Alert,
-    Box,
-    Button,
-    CircularProgress,
-    Container,
-    Paper,
-    TextField,
-    Typography
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  TextField,
+  Typography
 } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
@@ -52,7 +51,7 @@ function SetupPassword() {
     }
 
     try {
-      const response = await axios.post('https://task-app-mern-vl34.onrender.com/api/auth/set-password', {
+      const response = await axios.post('https://task-app-mern-q6y2.onrender.com/api/auth/set-password', {
         token,
         password: formData.password,
         confirmPassword: formData.confirmPassword
@@ -63,7 +62,14 @@ function SetupPassword() {
         navigate('/login');
       }, 2000);
     } catch (error) {
-      setError(error.response?.data?.message || 'An error occurred');
+      const errorMessage = error.response?.data?.message || 'An error occurred';
+      setError(errorMessage);
+
+      if (errorMessage.includes('expired')) {
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000); 
+      }
     } finally {
       setLoading(false);
     }

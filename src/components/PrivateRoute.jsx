@@ -22,6 +22,7 @@ function PrivateRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
+  
   return children;
 }
 

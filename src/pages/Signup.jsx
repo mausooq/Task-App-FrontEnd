@@ -1,10 +1,11 @@
 import {
-    Alert,
-    Box,
-    Button,
-    Link,
-    TextField,
-    Typography
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Link,
+  TextField,
+  Typography
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +15,8 @@ function Signup() {
   const navigate = useNavigate();
   const { signup } = useAuth();
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -30,11 +33,20 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
     try {
-      await signup(formData);
-      navigate('/login');
+      const response = await signup(formData);
+      setSuccess(response.message);
+      setTimeout(() => {
+        navigate('/login');
+      }, 10000); 
     } catch (error) {
-      setError(error.response?.data?.message || 'An error occurred');
+      setError(error.message || 'An error occurred');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,7 +55,23 @@ function Signup() {
       <Typography component="h1" variant="h5" align="center">
         Sign up
       </Typography>
-      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+      
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {error}
+        </Alert>
+      )}
+      
+      {success && (
+        <Alert severity="success" sx={{ mt: 2 }}>
+          {success}
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            Please check your email to set up your password. 
+            Redirecting to login page in 10 seconds...
+          </Typography>
+        </Alert>
+      )}
+
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
         <TextField
           margin="normal"
@@ -54,6 +82,7 @@ function Signup() {
           autoFocus
           value={formData.firstName}
           onChange={handleChange}
+          disabled={loading || success}
         />
         <TextField
           margin="normal"
@@ -63,6 +92,7 @@ function Signup() {
           label="Last Name"
           value={formData.lastName}
           onChange={handleChange}
+          disabled={loading || success}
         />
         <TextField
           margin="normal"
@@ -72,6 +102,7 @@ function Signup() {
           label="Username"
           value={formData.username}
           onChange={handleChange}
+          disabled={loading || success}
         />
         <TextField
           margin="normal"
@@ -82,17 +113,27 @@ function Signup() {
           type="email"
           value={formData.email}
           onChange={handleChange}
+          disabled={loading || success}
         />
         <Button
           type="submit"
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
+          disabled={loading || success}
         >
-          Sign Up
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            'Sign Up'
+          )}
         </Button>
         <Box sx={{ textAlign: 'center' }}>
-          <Link href="/login" variant="body2">
+          <Link 
+            href="/login" 
+            variant="body2"
+            sx={{ pointerEvents: success ? 'none' : 'auto' }}
+          >
             Already have an account? Sign in
           </Link>
         </Box>
